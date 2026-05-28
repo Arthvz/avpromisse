@@ -1,107 +1,77 @@
-# 📅 Agenda de Compromissos
+# Agenda de Compromissos
 
-Aplicativo mobile/web desenvolvido com **Flutter** e **Firebase**, permitindo que o usuário gerencie seus compromissos pessoais de forma segura e prática.
+App de agenda pessoal desenvolvido em **Flutter** com **Firebase**, onde cada usuário gerencia seus próprios compromissos de forma segura.
 
----
+## Funcionalidades
 
-## 📋 Descrição
+- Cadastro e login com e-mail e senha (Firebase Auth)
+- Criar, listar, editar e excluir compromissos
+- Dados isolados por usuário via Firestore
+- Validação de formulários e tratamento de erros
 
-O app permite criar, visualizar, editar e excluir compromissos após autenticação. Cada usuário visualiza apenas seus próprios dados, garantindo privacidade.
+## Tecnologias
 
----
+- Flutter / Dart
+- Firebase Auth
+- Cloud Firestore
+- intl (formatação de datas)
 
-## ✅ Funcionalidades Principais
-
-- 🔐 **Cadastro** de conta com e-mail e senha
-- 🔑 **Login** e **Logout** com proteção de telas
-- ➕ **Criar** compromisso (título, descrição, data e hora)
-- 📋 **Listar** compromissos em ordem cronológica
-- ✏️ **Editar** compromisso existente
-- 🗑️ **Excluir** compromisso com confirmação
-- ⚠️ Validação de formulários e tratamento de erros
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-| Tecnologia | Função |
-|---|---|
-| Flutter | Framework de desenvolvimento multiplataforma |
-| Dart | Linguagem de programação |
-| Firebase Auth | Autenticação de usuários |
-| Cloud Firestore | Banco de dados em tempo real |
-| intl | Formatação de datas |
-
----
-
-## 📁 Estrutura do Projeto
+## Estrutura
 
 ```
 lib/
-├── main.dart                         # Ponto de entrada, roteamento por auth
-├── models/
-│   └── appointment.dart              # Modelo de dados do compromisso
+├── main.dart                         # Entrada e roteamento por auth
+├── models/appointment.dart           # Modelo do compromisso
 ├── services/
 │   ├── auth_service.dart             # Login, cadastro, logout
-│   └── database_service.dart        # CRUD no Firestore
+│   └── database_service.dart         # CRUD no Firestore
 ├── screens/
-│   ├── login_screen.dart             # Tela de login
-│   ├── register_screen.dart          # Tela de cadastro
+│   ├── login_screen.dart
+│   ├── register_screen.dart
 │   ├── home_screen.dart              # Lista de compromissos
-│   └── appointment_form_screen.dart  # Formulário (criar/editar)
-└── widgets/
-    └── appointment_card.dart         # Card reutilizável de compromisso
+│   └── appointment_form_screen.dart  # Criar/editar
+└── widgets/appointment_card.dart
 ```
 
----
-
-## 🚀 Como Executar o Projeto
+## Como rodar
 
 ### Pré-requisitos
-
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) instalado
-- Conta no [Firebase](https://firebase.google.com)
-- Android Studio ou VS Code com extensão Flutter
+- Projeto no [Firebase Console](https://console.firebase.google.com) com **Authentication (E-mail/Senha)** e **Cloud Firestore** ativados
 
-### Passos
+### Clonar e instalar dependências
 
-1. **Clone o repositório**
-   ```bash
-   git clone https://github.com/seu-usuario/agenda_compromissos.git
-   cd agenda_compromissos
-   ```
+```bash
+git clone https://github.com/Arthvz/avpromisse.git
+cd avpromisse
+flutter pub get
+```
 
-2. **Instale as dependências**
-   ```bash
-   flutter pub get
-   ```
+### Configurar o Firebase
 
-3. **Configure o Firebase**
-   - Acesse o [Firebase Console](https://console.firebase.google.com)
-   - Crie um novo projeto
-   - Adicione um app Android e/ou iOS/Web
-   - Ative o **Firebase Authentication** (método: E-mail/Senha)
-   - Ative o **Cloud Firestore** (modo de teste para desenvolvimento)
-   - Instale o FlutterFire CLI e execute:
-     ```bash
-     dart pub global activate flutterfire_cli
-     flutterfire configure
-     ```
-   - Isso gera automaticamente o arquivo `lib/firebase_options.dart`
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure
+```
 
-4. **Atualize o `main.dart`** para usar as opções geradas:
-   ```dart
-   await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-   );
-   ```
+Isso gera o `lib/firebase_options.dart` com as credenciais do seu projeto.
 
-5. **Execute o app**
-   ```bash
-   flutter run
-   ```
+### Rodar
 
-### Regras do Firestore (recomendado para produção)
+```bash
+flutter run            # roda no dispositivo/emulador conectado
+flutter run -d chrome  # roda na web
+```
+
+### Buildar
+
+```bash
+flutter build apk       # Android
+flutter build ios       # iOS
+flutter build web       # Web
+```
+
+## Regras recomendadas do Firestore
 
 ```
 rules_version = '2';
@@ -117,36 +87,17 @@ service cloud.firestore {
 }
 ```
 
----
+## Modelo de dados
 
-## 🔒 Autenticação
+Coleção `appointments`:
 
-A autenticação é feita via **Firebase Authentication** com e-mail e senha.
-
-- O `AuthService` encapsula login, cadastro e logout
-- O `main.dart` usa um `StreamBuilder` para escutar o estado de autenticação em tempo real
-- Telas protegidas são acessíveis apenas com sessão ativa
-- Erros como "e-mail já cadastrado", "senha fraca" e "credenciais inválidas" são tratados e exibidos ao usuário
-
----
-
-## 💾 Banco de Dados
-
-O **Cloud Firestore** armazena os compromissos na coleção `appointments`.
-
-Cada documento contém:
-
-| Campo | Tipo | Descrição |
-|---|---|---|
-| `title` | String | Título do compromisso |
-| `description` | String | Descrição/observação |
-| `dateTime` | String (ISO 8601) | Data e hora |
-| `userId` | String | UID do usuário dono |
-
-Os dados são filtrados por `userId` para que cada usuário veja apenas seus próprios compromissos.
+| Campo         | Tipo              | Descrição              |
+|---------------|-------------------|------------------------|
+| `title`       | String            | Título                 |
+| `description` | String            | Descrição              |
+| `dateTime`    | String (ISO 8601) | Data e hora            |
+| `userId`      | String            | UID do dono do registro |
 
 ---
 
-## 👨‍💻 Autor
-
-Desenvolvido como projeto acadêmico para a disciplina de Desenvolvimento Mobile/Web.
+Projeto acadêmico — Desenvolvimento Mobile/Web.
